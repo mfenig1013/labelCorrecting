@@ -9,7 +9,7 @@ import networkx
 import container
 import labelCorrect as lc
 
-# TSP graph (see Sec. 2.3 of [1])
+# TSP graph (see Sec. 2.3 of Bertsekas)
 def createExample():    
     DG = networkx.DiGraph()
     edgeList = [('A', 'AB', 5), ('AB', 'ABC', 20), ('ABC', 'ABCD', 3), ('ABCD', 'T', 15),\
@@ -47,17 +47,21 @@ class lcTests(unittest.TestCase):
     def testLC(self):
         g = createExample()
         
-        # use a stack (depth-first)
-        pDFS, mplDFS, nvDFS = lc.shortestPath(g, 'A', 'T', container.stack())
-        
         # use a queue (breadth-first)
         pBFS, mplBFS, nvBFS = lc.shortestPath(g, 'A', 'T', container.q())
-
+        self.assertTrue(len(nvBFS) == 16)
+        
+        # use a stack (depth-first)
+        pDFS, mplDFS, nvDFS = lc.shortestPath(g, 'A', 'T', container.stack())
+        self.assertTrue(len(nvDFS) == 13)
+        
         # use a priority q (best-first)
         pBest, mplBest, nvBest = lc.shortestPath(g, 'A', 'T', container.pq())
-
-        # best-first with heuristic/prune/A*
+        self.assertTrue(len(nvBest) == 10)
+        
+        # best-first with heuristic/A*
         pA, mplA, nvA = lc.shortestPath(g, 'A', 'T', container.pq(), slack=1)
+        self.assertTrue(len(nvA) == 9)
         
 if __name__ == '__main__':
     unittest.main()

@@ -38,12 +38,12 @@ class stack(container):
         
     def getNext(self):
         nextItem = self.stack.pop()
-        self.setc.remove(nextItem)
+        self.setc.remove(nextItem[1])
         self.numItems -= 1
         return nextItem
     
     def addNext(self, newItem):
-        self.setc.add(newItem)
+        self.setc.add(newItem[1])
         self.stack.append(newItem)
         self.numItems += 1
     
@@ -59,13 +59,13 @@ class q(container):
         
     def getNext(self):
         nextItem = self.q.popleft()
-        self.setc.remove(nextItem)
+        self.setc.remove(nextItem[1])
         self.numItems -= 1
         return nextItem
     
     def addNext(self, newItem):
         self.q.append(newItem)
-        self.setc.add(newItem)
+        self.setc.add(newItem[1])
         self.numItems += 1
             
     def existsIn(self, testItem):
@@ -80,7 +80,7 @@ class pq(container):
         
     def getNext(self):
         nextItem = heapq.heappop(self.pq)
-        self.setc.remove(nextItem)
+        self.setc.remove(nextItem[1])
         self.numItems -= 1
         return nextItem
     
@@ -88,7 +88,7 @@ class pq(container):
     def addNext(self, newItem):
         heapq.heappush(self.pq, newItem)
         self.numItems += 1
-        self.setc.add(newItem)
+        self.setc.add(newItem[1])
     
     def existsIn(self, testItem):
         return testItem in self.setc

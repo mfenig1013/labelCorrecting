@@ -63,5 +63,8 @@ class lcTests(unittest.TestCase):
         pA, mplA, nvA = lc.shortestPath(g, 'A', 'T', container.pq(), slack=1)
         self.assertTrue(len(nvA) == 9)
         
+        # best path should always be the same (minimum) length
+        self.assertTrue(mplBFS == mplDFS == mplBest == mplA)
+        
 if __name__ == '__main__':
     unittest.main()

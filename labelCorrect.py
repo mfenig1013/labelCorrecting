@@ -19,7 +19,7 @@ def shortestPath(g, origin, destination, copen, upperInit=np.inf, slack=None):
     copen.addNext((0, origin))
 
     # keep a running tally of shortest distances to all nodes and immediate (best) parent
-    # set the origin node distance-to-self (d2s) to 0
+    # set the origin node distance-to-self (d) to 0
     shortest = {origin: {'d': 0, 'parent': None}}
     
     upper = upperInit
@@ -36,28 +36,27 @@ def shortestPath(g, origin, destination, copen, upperInit=np.inf, slack=None):
             a_ij = g.get_edge_data(candidateNode[1], cname)['weight'] 
             # distance to parent
             di = candidateNode[0]
-            # left-hand side of equation
-            lhs = di + a_ij
+            # distance to j node is sum of ditance to i and then from i to j
+            dj = di + a_ij
             
-            # create an A* heuristic here based on children of child
+            # A*/heuristic enabled if slack offered
             if slack is not None: 
                 # if the next node is destination, then at least 1 from child to destination
                 if destination in list(g.successors(cname)):
-                    lhs = di + a_ij + 1*slack
+                    lhs = dj + 1*slack
                 else: # if destination is not next, then there's at least 2 more nodes of non-zero distance
-                    lhs = di + a_ij + 2*slack
+                    lhs = dj + 2*slack
             else:
-                pass # ignore if not provided
+                # ignore if slack not provided
+                lhs = dj
             
             # right-hand side 
             if cname in shortest:
                 rhs = min(shortest[cname]['d'], upper)
-            else:
+            else: # if node is not yet updated, then assume initialized value (np.inf)
                 rhs = min(np.inf, upper)
                 
             if lhs < rhs:
-                # set the distance to child as the minimal distance found so far
-                dj = di + a_ij # repeated here in case slack is being used
                 shortest[cname] = {'d': dj, 'parent': candidateNode[1]}
                 if (cname != destination) and (not copen.existsIn(cname)):
                     copen.addNext((dj, cname))
@@ -67,10 +66,10 @@ def shortestPath(g, origin, destination, copen, upperInit=np.inf, slack=None):
                 if cname == destination:
                     upper = dj
     
-    # this is the shortest path
+    # this is the shortest path length
     minPathLength = shortest[destination]['d']
     
-    # generate the path by back-tracking through shortest
+    # generate the actual path by back-tracking through shortest
     rpath = [destination]
     nextNode = destination
     flag = True

@@ -2,6 +2,10 @@
 """
 Created on Sat Jun  6 15:19:39 2020
 Container data structure for use in label-correcting algorithm
+Different containers induce different search types
+stack -> depth-first
+queue -> breadth-first
+priority queue -> best-first
 @author: Max Fenig
 """
 from abc import ABCMeta, abstractmethod
@@ -86,6 +90,7 @@ class pq(container):
     
     
     def addNext(self, newItem):
+        # this will use newItem[0] to rank
         heapq.heappush(self.pq, newItem)
         self.numItems += 1
         self.setc.add(newItem[1])
